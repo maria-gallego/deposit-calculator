@@ -19,7 +19,7 @@ export const validatedInterestPaymentFrequencyEnum = (paymentString: string): In
    }
 }
 
-export const validatedInterest = (annualInterest: number): number => {
+const validatedInterest = (annualInterest: number): number => {
    if (annualInterest > 0) {
       return annualInterest/100
    } else {
@@ -27,7 +27,7 @@ export const validatedInterest = (annualInterest: number): number => {
    }
 }
 
-export const validatedBalance = (balance: number): number => {
+const validatedBalance = (balance: number): number => {
    if (balance > 0) {
       return balance
    } else {
@@ -35,11 +35,11 @@ export const validatedBalance = (balance: number): number => {
    }
 }
 
-export const validatedInvestmentPeriod = (investmentPeriod: number): number => {
-   if (investmentPeriod > 1-12) {
-      return investmentPeriod
+const validatedInvestmentPeriod = (investmentTerm: number): number => {
+   if (investmentTerm > 0) {
+      return investmentTerm
    } else {
-      throw new ValidationError("The initial balance must be a number greater than 1000")
+      throw new ValidationError("The investment term is the number of years the money will be invested and must be greater than 0")
    }
 }
 const finalBalanceWithPeriods = (
