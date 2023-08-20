@@ -1,37 +1,36 @@
 import {finalBalance} from "./interest-calculator";
-const { program } = require('commander');
+import {program} from 'commander';
 
-
-// Define version and description
+// CLI Configuration
 program
     .name("Interest Calculator CLI")
     .version('0.0.1')
     .description('Calculates the ending balance of a deposit ' +
         'given the investment term, annual interest and interest payment frequency');
 
-// Define input flags
 program
-    .option('--interestPaymentFrequency <string>', 'foo bar monthly, etc..')
-    .option('--initialBalance <number>', 'fooo dsfsdafdsaf')
-    .option('--annualInterest <number>', 'e.g. 1.23 for 1.23%')
-    .option('--investmentTerm <integer>', 'number of years the investment will run');
+    .requiredOption('--interestPaymentFrequency <string>', 'How ofter the term deposit pays interests')
+    .requiredOption('--initialBalance <double>', 'Initial amount')
+    .requiredOption('--annualInterest <double>', 'Annual interest, e.g. 1.23 for 1.23%')
+    .requiredOption('--investmentTerm <integer>', 'number of years the investment will run');
 
-// Parse command-line arguments
+// Process input arguments
 program.parse();
 const options = program.opts();
-
-// Access input flag values
 const interestPaymentFrequency = options.interestPaymentFrequency;
 const initialBalance = options.initialBalance;
 const annualInterest = options.annualInterest;
 const investmentTerm = options.investmentTerm;
 
-// // Your application logic goes here
+// Run Application
+const result = finalBalance(interestPaymentFrequency, initialBalance, annualInterest, investmentTerm);
+const formattedResult: string = result.toLocaleString('en-AU', { style: 'currency', currency: 'AUD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+// Print outputs
 console.log('Input arguments:');
 console.log('interestPaymentFrequency:', interestPaymentFrequency);
 console.log('initialBalance:', initialBalance);
 console.log('annualInterest:', annualInterest);
 console.log('investmentTerm:', investmentTerm);
 console.log('---------------------------');
-console.log('final balance:', finalBalance(interestPaymentFrequency, initialBalance, annualInterest, investmentTerm));
-
+console.log('Final Balance:', formattedResult);

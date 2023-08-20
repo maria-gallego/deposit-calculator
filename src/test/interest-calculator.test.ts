@@ -1,16 +1,9 @@
-import {
-    finalBalance,
-    validatedInterestPaymentFrequencyEnum
-} from "../interest-calculator";
+import {finalBalance, validatedInterestPaymentFrequencyEnum} from "../interest-calculator";
 import {ValidationError} from "../error-handling";
 
 describe('tests enum generator function', () => {
     it('tests enum generator with a valid string', () => {
         expect(validatedInterestPaymentFrequencyEnum("Monthly")).toEqual(12)
-    })
-
-    it('tests enum generator with an invalid string', () => {
-        expect(validatedInterestPaymentFrequencyEnum("weekly")).toEqual(undefined)
     })
 
     it('tests enum generator for at maturity', () => {

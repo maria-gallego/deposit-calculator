@@ -68,7 +68,7 @@ export const finalBalance = (
     initialBalance: number,
     annualInterest: number,
     investmentTerm: number
-) => {
+): number => {
    const interestPaymentFrequencyEnum = validatedInterestPaymentFrequencyEnum(interestPaymentFrequency)
    if (interestPaymentFrequencyEnum === 0) {
       return finalBalanceAtMaturity(initialBalance, annualInterest, investmentTerm)
