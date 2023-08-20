@@ -1,26 +1,25 @@
 import {ValidationError} from "./error-handling";
 
-enum PaymentFrequency {
+enum InterestPaymentFrequency {
    MONTHLY = 12,
    QUARTERLY = 4,
    ANNUALLY = 1,
    ATMATURITY = 0
 }
 
-export const paymentFrequencyValue = (paymentString: string): PaymentFrequency | undefined => {
-   const getFrequencyEnum = (paymentString: string) => {
-      const transformedString = paymentString.toUpperCase().replace(/\s/g, "")
-      return PaymentFrequency[transformedString as keyof typeof PaymentFrequency]
-   }
+export const validatedInterestPaymentFrequencyEnum = (paymentString: string): InterestPaymentFrequency => {
+   const transformedString = paymentString.toUpperCase().replace(/\s/g, "")
+   const frequencyEnum =
+       InterestPaymentFrequency[transformedString as keyof typeof InterestPaymentFrequency]
 
-   if (getFrequencyEnum(paymentString) !== undefined) {
-      return getFrequencyEnum(paymentString)
+   if (frequencyEnum !== undefined) {
+      return frequencyEnum
    } else {
-      throw new ValidationError("Payment Frequency mst be Monthly, Quarterly, Annually or At Maturity")
+      throw new ValidationError("Payment Frequency must be Monthly, Quarterly, Annually or At Maturity")
    }
 }
 
-const validatedInterest = (annualInterest: number) => {
+export const validatedInterest = (annualInterest: number): number => {
    if (annualInterest > 0) {
       return annualInterest/100
    } else {
@@ -28,39 +27,38 @@ const validatedInterest = (annualInterest: number) => {
    }
 }
 
-const validatedBalance = (balance: number) => {
-   if (balance > 1000) {
+export const validatedBalance = (balance: number): number => {
+   if (balance > 0) {
       return balance
    } else {
-   throw new ValidationError("The initial balance must be a number greater than 1000")
+   throw new ValidationError("The initial balance must be a number greater than 0")
    }
 }
 
-const validatedInvestmentPeriod = (investmentPeriod: number) => {
+export const validatedInvestmentPeriod = (investmentPeriod: number): number => {
    if (investmentPeriod > 1-12) {
       return investmentPeriod
    } else {
       throw new ValidationError("The initial balance must be a number greater than 1000")
    }
 }
-export const finalBalanceWithPeriods = (
+const finalBalanceWithPeriods = (
     initialBalance: number,
     annualInterest: number,
-    periodsInYear: string,
+    interestPaymentFrequency: InterestPaymentFrequency,
     investmentTerm: number
-) => {
-   const paymentFrequency = paymentFrequencyValue(periodsInYear)
+): number => {
    const interestValue = validatedInterest(annualInterest)
-   const interestPerPeriod = interestValue / paymentFrequency
-   const periodsInvested = paymentFrequency * validatedInvestmentPeriod(investmentTerm)
+   const interestPerPeriod = interestValue / interestPaymentFrequency
+   const periodsInvested = interestPaymentFrequency * validatedInvestmentPeriod(investmentTerm)
    return validatedBalance(initialBalance) * (1 + interestPerPeriod) ** periodsInvested
 }
 
-export const finalBalanceAtMaturity = (
+const finalBalanceAtMaturity = (
     initialBalance: number,
     annualInterest: number,
     investmentTerm: number
-) => {
+): number => {
    const interestValue =  validatedInterest(annualInterest)
    return (initialBalance * interestValue * validatedInvestmentPeriod(investmentTerm)) + initialBalance
 }
@@ -71,10 +69,10 @@ export const finalBalance = (
     annualInterest: number,
     investmentTerm: number
 ) => {
-   const investmentFrequencyValue = paymentFrequencyValue(interestPaymentFrequency)
-   if (investmentFrequencyValue === 0) {
+   const interestPaymentFrequencyEnum = validatedInterestPaymentFrequencyEnum(interestPaymentFrequency)
+   if (interestPaymentFrequencyEnum === 0) {
       return finalBalanceAtMaturity(initialBalance, annualInterest, investmentTerm)
    } else {
-      return finalBalanceWithPeriods(initialBalance, annualInterest, interestPaymentFrequency, investmentTerm)
+      return finalBalanceWithPeriods(initialBalance, annualInterest, interestPaymentFrequencyEnum, investmentTerm)
    }
 }
