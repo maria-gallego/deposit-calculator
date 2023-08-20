@@ -5,22 +5,17 @@ enum PaymentFrequency {
    ATMATURITY = 0
 }
 
-export function getFrequencyEnum(paymentString: string): PaymentFrequency | undefined {
-   const transformedString = paymentString.toUpperCase().replace(/\s/g, "")
-   return PaymentFrequency [transformedString as keyof typeof PaymentFrequency]
-}
-
-const paymentFrequencyValue = (paymentString: string) => {
-   const frequencyValue = getFrequencyEnum(paymentString)
-
-   if (frequencyValue !== undefined) {
-      return frequencyValue
-   } else {
-      console.log('handle error')
+export const paymentFrequencyValue = (paymentString: string): PaymentFrequency | undefined => {
+   const getFrequencyEnum = (paymentString: string) => {
+      const transformedString = paymentString.toUpperCase().replace(/\s/g, "")
+      return PaymentFrequency[transformedString as keyof typeof PaymentFrequency]
    }
-}
-export const interestRate = (annualInterestRate: number) => {
-   return annualInterestRate/100
+
+   if (getFrequencyEnum(paymentString) !== undefined) {
+      return getFrequencyEnum(paymentString)
+   } else {
+      return undefined
+   }
 }
 
 export const finalBalanceWithPeriods = (
@@ -30,12 +25,10 @@ export const finalBalanceWithPeriods = (
     investmentTerm: number
 ) => {
    const periodsInYearValue = paymentFrequencyValue(periodsInYear)
-   const interest = interestRate(annualInterest)
+   const interest = annualInterest/100
    const interestPerPeriod = interest / periodsInYearValue
    const periodsInvested = periodsInYearValue * investmentTerm
-   const result = initialBalance * (1 + interestPerPeriod) ** periodsInvested
-
-   return parseInt(result.toFixed(0))
+   return initialBalance * (1 + interestPerPeriod) ** periodsInvested
 }
 
 export const finalBalanceAtMaturity = (
@@ -43,22 +36,20 @@ export const finalBalanceAtMaturity = (
     annualInterest: number,
     investmentTerm: number
 ) => {
-   const interest = interestRate(annualInterest)
-   const result = (initialBalance * interest * investmentTerm) + initialBalance
-
-   return parseInt(result.toFixed(0))
+   const interest =  annualInterest/100
+   return (initialBalance * interest * investmentTerm) + initialBalance
 }
 
 export const finalBalance = (
-    periodsInYear: string,
+    interestPaymentFrequency: string,
     initialBalance: number,
     annualInterest: number,
     investmentTerm: number
 ) => {
-   const periodsInYearValue = paymentFrequencyValue(periodsInYear)
-   if (periodsInYearValue === 0) {
+   const investmentFrequencyValue = paymentFrequencyValue(interestPaymentFrequency)
+   if (investmentFrequencyValue === 0) {
       return finalBalanceAtMaturity(initialBalance, annualInterest, investmentTerm)
    } else {
-      return finalBalanceWithPeriods(initialBalance, annualInterest, periodsInYear, investmentTerm)
+      return finalBalanceWithPeriods(initialBalance, annualInterest, interestPaymentFrequency, investmentTerm)
    }
 }
