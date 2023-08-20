@@ -1,5 +1,3 @@
-import {ValidationError} from "./error-handling";
-
 enum InterestPaymentFrequency {
    MONTHLY = 12,
    QUARTERLY = 4,
@@ -19,11 +17,18 @@ export const validatedInterestPaymentFrequencyEnum = (paymentString: string): In
    }
 }
 
+export class ValidationError extends Error {
+   constructor(message: string) {
+      super(message)
+      this.name = "ValidationError"
+   }
+}
+
 const validatedInterest = (annualInterest: number): number => {
-   if (annualInterest > 0) {
+   if (annualInterest >0) {
       return annualInterest/100
    } else {
-      throw new ValidationError("Interest must be entered as a percentage greater than 0, like 1.5")
+      throw new ValidationError("Interest must be entered as a percentage and must be greater than 0 (e.g. 1.5)")
    }
 }
 
@@ -36,10 +41,10 @@ const validatedBalance = (balance: number): number => {
 }
 
 const validatedInvestmentPeriod = (investmentTerm: number): number => {
-   if (investmentTerm > 0) {
+   if (investmentTerm >= 1) {
       return investmentTerm
    } else {
-      throw new ValidationError("The investment term is the number of years the money will be invested and must be greater than 0")
+      throw new ValidationError("The investment term is the number of years the money will be invested and must be >= 1")
    }
 }
 const finalBalanceWithPeriods = (

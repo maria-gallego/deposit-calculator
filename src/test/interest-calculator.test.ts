@@ -1,5 +1,4 @@
-import {finalBalance, validatedInterestPaymentFrequencyEnum} from "../interest-calculator";
-import {ValidationError} from "../error-handling";
+import {finalBalance, validatedInterestPaymentFrequencyEnum, ValidationError} from "../interest-calculator";
 
 describe('tests enum generator function', () => {
     it('tests enum generator with a valid string', () => {
@@ -31,7 +30,7 @@ describe('tests error handling for input values', () => {
     it('error handling for invalid input for interest rate', () => {
         expect(() => {
             finalBalance("monthly", 10000, 0, 3)
-        }).toThrowError(new ValidationError("Interest must be entered as a percentage greater than 0, like 1.5"))
+        }).toThrowError(new ValidationError("Interest must be entered as a percentage and must be greater than 0 (e.g. 1.5)"))
     })
 
     it('error handling for invalid input for initial balance', () => {
@@ -42,7 +41,7 @@ describe('tests error handling for input values', () => {
 
     it('error handling for invalid input for investment term', () => {
         expect(() => {
-            finalBalance("monthly", 10000, 1.1, 0)
-        }).toThrowError(new ValidationError("The investment term is the number of years the money will be invested and must be greater than 0"))
+            finalBalance("monthly", 10000, 1.1, 0.5)
+        }).toThrowError(new ValidationError("The investment term is the number of years the money will be invested and must be >= 1"))
     })
 })
